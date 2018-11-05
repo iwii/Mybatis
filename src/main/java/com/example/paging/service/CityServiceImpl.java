@@ -1,5 +1,6 @@
 package com.example.paging.service;
 
+import com.example.paging.dto.CostCenter;
 import com.example.paging.repository.CityRepo;
 import com.example.paging.repository.DepartmentRepo;
 import org.apache.commons.lang3.StringUtils;
@@ -8,7 +9,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,23 +27,31 @@ public class CityServiceImpl implements CityService {
 
     @Override
     @Cacheable( cacheNames = "costCenters", cacheManager = "costCenterCacheManager" )
-    public List<String> getCostCenter(String userId) {
-
+    public List<CostCenter> getCostCenter(String userId) {
         return cityRepo.getCostCenters(userId);
     }
 
-    public List<String> sublist(String userId, String phrase, int size, int page) {
+    @Cacheable( cacheNames = "costCenters", cacheManager = "costCenterCacheManager" )
+    public List<CostCenter> getCostCenter(String userId, String phrase, int size, int page) {
 
-        Optional<List<String>> costCenters = Optional.ofNullable(this.getCostCenter(userId));
+        Optional<List<CostCenter>> costCenters = Optional.ofNullable(this.getCostCenter(userId));
         int startIndex = page * size;
 
         return costCenters
                 .map(List::stream).orElseGet(Stream::empty)
-                .filter(StringUtils::isNoneBlank)
-                .filter(v -> StringUtils.isBlank(phrase) || v.toLowerCase().contains(phrase.toLowerCase()))
+                .filter(Objects::nonNull)
+                .filter(this.buildPhrasePredicate(phrase))
                 .skip(startIndex)
                 .limit(size)
                 .collect(Collectors.toList());
+    }
+
+    private Predicate<CostCenter> buildPhrasePredicate(final String phrase){
+        return costCenter -> StringUtils.isBlank(phrase) || Optional.ofNullable(costCenter)
+                .map(CostCenter::getName)
+                .map(String::toLowerCase)
+                .filter(v -> v.contains(phrase.toLowerCase()))
+                .isPresent();
     }
 
 //    public List<String> getData(CityRepo cityRepo, String userId){

@@ -1,6 +1,6 @@
 package com.example.paging.repository;
 
-import org.springframework.cache.annotation.Cacheable;
+import com.example.paging.dto.CostCenter;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -9,11 +9,12 @@ import java.util.List;
 @Repository
 public class CityRepo {
 
-    public List<String> getCostCenters(final String userId) {
-        List<String> cities = new ArrayList<>();
+    public List<CostCenter> getCostCenters(final String userId) {
+        List<CostCenter> costCenters = new ArrayList<>();
         for (int i = 0; i < 20000; i++) {
-            cities.add("wroclaw" + i);
+            costCenters.add(new CostCenter(i + "wroclaw", String.valueOf(i), String.valueOf(i)));
         }
-        return cities;
+        return costCenters;
     }
+
 }

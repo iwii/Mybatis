@@ -1,5 +1,6 @@
 package com.example.paging.controller;
 
+import com.example.paging.dto.CostCenter;
 import com.example.paging.service.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +17,12 @@ public class CityController {
 
 
     @RequestMapping( value = "/cities", method = RequestMethod.GET )
-    private List<String> city( final String phrase, final int pageSize, final int page) {
-        return cityService.sublist("someuserid", phrase, pageSize, page);
+    private List<CostCenter> cities() {
+        return cityService.getCostCenter("someuserid");
     }
 
     @RequestMapping( value = "/department", method = RequestMethod.GET )
-    private List department(final String userId) {
+    private List<String> department(final String userId) {
         return cityService.getAllOrgDetails(userId);
     }
 }
