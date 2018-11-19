@@ -12,15 +12,29 @@
 
 
 
-function LoadNextPageOptions() {
+/*function LoadNextPageOptions() {
     $.getJSON('/cities', function(data) {
        $.each(data, function (index, value) {
           $("#cities").append('<option value="' + value.value + '">' + value.name + '</option>');
         });
 
     });
-}
+}*/
 
+
+function LoadNextPageOptions() {
+$.ajax({
+  url: '/cities',
+  type: "GET",
+  dataType: 'json',
+  success: function(data) {
+       $.each(data, function (index, value)
+       {
+          $("#cities").append('<option value="' + value.value + '">' + value.name + '</option>');
+       });
+       }
+    });
+}
 function LoadNextDepartment() {
     $.getJSON('/department?userId=1', function(data) {
        $.each(data, function (index, value) {
@@ -37,15 +51,17 @@ LoadNextPageOptions(i);
 
 </head>
 <body>
-<p>Page: <span id="page"></span>
-  </p>
 
-  <p>scrollTop: <span id="scrollTop"></span>
-  </p>
-  <p>totalheight: <span id="totalheight"></span>
-  </p>
-<select id="cities"> </select>
+<select id="cities">
+    <c:forEach items="${biRoles}" var="value">
+           <option><c:out value="${value}" /> </option>
+     </c:forEach>
+ </select>
+
 <select id="departments" >
+ <c:forEach items="${hrDepartments}"  var="value">
+                 <option><c:out value="${value}" /> </option>
+     </c:forEach>
 </select>
 
 
